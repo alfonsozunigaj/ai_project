@@ -114,8 +114,6 @@ for student in all_students:
 
 # After every student has been analysed, a new data frame is created using pandas, based on the normalized_data array.
 data_frame = pd.DataFrame(normalized_data)
-# The names for the headers are added here for a more comfortable reading of the normalized data.
-data_frame.columns = ['ID'] + ['Periodo', 'Curso', 'Nota']*((len(data_frame.columns)-1)//3)
 # The normalized data is saved to the current directory with the name 'ready.csv'
 data_frame.to_csv('balanced_data.csv')
 
