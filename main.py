@@ -2,6 +2,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
+import time
 
 
 def semester_avg_by_major():
@@ -70,12 +71,6 @@ all_courses = {}
 for course in range(len(aux_courses)):
     all_courses[aux_courses[course]] = course
 
-# Fetching all periods and saving them into a dictionary
-aux_periods = dataset['Periodo'].unique()
-all_periods = {}
-for period in range(len(aux_periods)):
-    all_periods[aux_periods[period]] = period
-
 # Fetching all majors and saving them into a dictionary
 aux_majors = dataset['Especialidad del momento'].unique()
 all_majors = {}
@@ -94,10 +89,14 @@ to_erase = []
 """
 # Created a list in which all student records will be saved and ready for the data frame
 normalized_data = []
+majors = {}
 
 for student in all_students:
     student_record = [student]
-    student_record.append(all_majors[dataset.loc[dataset['ID'] == student, 'Especialidad del momento'].iloc[0]])
+    grades = []
+    course_taken = []
+    if student not in majors:
+        majors[student] = all_majors[dataset.loc[dataset['ID'] == student, 'Especialidad del momento'].iloc[0]]
     # Every tuple concerning the present student in the dataset is fetch and saved in my_dataset
     my_dataset = dataset.loc[dataset['ID'] == student]
     for course in all_courses:
@@ -105,26 +104,16 @@ for student in all_students:
         # student_record. If the course was taken more than once, it saves every instance of it.
         if (my_dataset['Codigo curso'] == course).any():
             course_data = my_dataset.loc[my_dataset['Codigo curso'] == course]
-            registered_periods = []
+            average = 0
             for i in range(len(course_data)):
-                student_record.append(all_periods[course_data.iloc[i]['Periodo']])
-                student_record.append(all_courses[course])
-                student_record.append(course_data.iloc[i]['Nota'])
-                registered_periods.append(all_periods[course_data.iloc[i]['Periodo']])
-            # Then, all data from the other semesters is saved indicating the student did not take the course.
-            for period in all_periods:
-                if all_periods[period] not in registered_periods:
-                    student_record.append(all_periods[period])
-                    student_record.append(all_courses[course])
-                    student_record.append(-1)
-        # If the student has not taken the course, this information in also saved in the record, indicating that,
-        # in period the student got a grade of -1 in the course. This negative number indicates that the course
-        # was not taken by this student.
+                average += course_data.iloc[i]['Nota']
+            average /= len(course_data)
+            grades.append(float(average)/7)
+            course_taken.append(1)
         else:
-            for period in all_periods:
-                student_record.append(all_periods[period])
-                student_record.append(all_courses[course])
-                student_record.append(-1)
+            grades.append(0.0)
+            course_taken.append(0)
+    student_record += grades + course_taken
 
     # After all the student records are gathered, the list is added to the normalized_data.
     normalized_data.append(student_record)

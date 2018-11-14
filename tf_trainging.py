@@ -26,7 +26,7 @@ display_step = 1
 # Network Parameters
 n_hidden_1 = 1876  # 1st layer number of neurons
 n_hidden_2 = 1876  # 2nd layer number of neurons
-n_input = 5629  # data input (img shape: 28*28)
+n_input = 536  # data input (img shape: 28*28)
 n_classes = 4  # amount of majors
 
 # tf Graph input
