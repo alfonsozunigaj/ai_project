@@ -98,14 +98,15 @@ all_students = dataset['ID'].unique()
 
 # Created a list in which all student records will be saved and ready for the data frame
 normalized_data = []
-majors = {}
+n_data_majors = []
+majors = []
 
 for student in all_students:
     student_record = [student]
     grades = []
     course_taken = []
     if student not in majors:
-        majors[student] = all_majors[dataset.loc[dataset['ID'] == student, 'Especialidad del momento'].iloc[0]]
+        majors.append(all_majors[dataset.loc[dataset['ID'] == student, 'Especialidad del momento'].iloc[0]])
     # Every tuple concerning the present student in the dataset is fetch and saved in my_dataset
     my_dataset = dataset.loc[dataset['ID'] == student]
     for course in all_courses:
@@ -126,13 +127,17 @@ for student in all_students:
 
     # After all the student records are gathered, the list is added to the normalized_data.
     normalized_data.append(student_record)
+    major_info = [student, 0, 0, 0, 0]
+    major_info[int(all_majors[dataset.loc[dataset['ID'] == student, 'Especialidad del momento'].iloc[0]]) + 1] = 1
+    n_data_majors.append(major_info)
 
 
 # After every student has been analysed, a new data frame is created using pandas, based on the normalized_data array.
 data_frame = pd.DataFrame(normalized_data)
+major_data_frame = pd.DataFrame(n_data_majors)
 # The normalized data is saved to the current directory with the name 'ready.csv'
 data_frame.to_csv('balanced_data.csv')
-
+major_data_frame.to_csv('major_index.csv')
 
 # Finally, we still need to create a training set, a validation set and a test set for our dataset
 # For this we initialize some variables to indicate the ratio in which to distribute the data in our dataset
