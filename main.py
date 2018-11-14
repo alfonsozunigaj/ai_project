@@ -1,10 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import recall_score
-from imblearn.over_sampling import SMOTE
 
 
 def semester_avg_by_major():
@@ -66,7 +63,7 @@ x_train, x_val, y_train, y_val = train_test_split(training_features, training_ta
                                                   test_size = .1,
                                                   random_state=12)
 
-
+print(x_train, x_val, y_train, y_val)
 
 # This function generates a graph that displays the average grade each major gets during their first two years of their
 # studies.
