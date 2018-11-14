@@ -1,6 +1,10 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import recall_score
+from imblearn.over_sampling import SMOTE
 
 
 def semester_avg_by_major():
@@ -45,10 +49,24 @@ dataset = dataset.drop_duplicates()
 dataset = dataset.drop(dataset[(dataset['Nota'] == 'APR') | (dataset['Nota'] == 'REP')].index)
 
 # Erase every tuple in which the major is INGA or not yet decided (ING)
-dataset = dataset.drop(dataset[(dataset['Especialidad del momento'] == 'INGA')].index)
+dataset = dataset.drop(dataset[(dataset['Especialidad del momento'] == 'INGA') | (dataset['Especialidad del momento'] == 'ING')].index)
 
 # Change any remaining data in the 'Nota' column to a numeric value
 dataset['Nota'] = dataset['Nota'].apply(pd.to_numeric)
+
+model_variables = ['Periodo', 'ID', 'Especialidad del momento', 'Codigo curso', 'Nombre curso', 'Nota']
+
+training_features, test_features, \
+    training_target, test_target, = train_test_split(dataset.drop(['Especialidad del momento'], axis=1),
+                                                     dataset['Especialidad del momento'],
+                                                     test_size = .1,
+                                                     random_state=12)
+
+x_train, x_val, y_train, y_val = train_test_split(training_features, training_target,
+                                                  test_size = .1,
+                                                  random_state=12)
+
+
 
 # This function generates a graph that displays the average grade each major gets during their first two years of their
 # studies.
