@@ -77,16 +77,23 @@ all_majors = {}
 for major in range(len(aux_majors)):
     all_majors[aux_majors[major]] = major
 
-dataset_INGI = dataset[dataset['Especialidad del momento'] == 'INGI']['ID'].unique()
-dataset_INGO = dataset[dataset['Especialidad del momento'] == 'INGO']['ID'].unique()
-print("INGI\n", dataset_INGI)
-print("INGO\n", dataset_INGO)
-drop_lenght = len(dataset_INGI) - len(dataset_INGO)
+dataset_INGI = dataset[dataset['Especialidad del momento'] == 'INGI']
+dataset_INGI = dataset_INGI['ID'].unique()
+dataset_INGO = dataset[dataset['Especialidad del momento'] == 'INGO']
+dataset_INGO = dataset_INGO['ID'].unique()
+drop_length = len(dataset_INGI) - len(dataset_INGO)
 to_erase = []
 
+while drop_length > 0:
+    to_erase_index = np.random.randint(len(dataset_INGI))
+    while dataset_INGI[to_erase_index] in to_erase:
+        to_erase_index = np.random.randint(len(dataset_INGI))
+    to_erase.append(dataset_INGI[to_erase_index])
+    drop_length -= 1
+
+dataset = dataset[~dataset['ID'].isin(to_erase)]
 
 
-"""
 # Created a list in which all student records will be saved and ready for the data frame
 normalized_data = []
 majors = {}
@@ -144,4 +151,3 @@ df_training.to_csv('training_set.csv')
 df_test.to_csv('testing_set.csv')
 df_validation.to_csv('validation_set.csv')
 
-"""
