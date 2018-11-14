@@ -53,18 +53,6 @@ dataset['Nota'] = dataset['Nota'].apply(pd.to_numeric)
 
 model_variables = ['Periodo', 'ID', 'Especialidad del momento', 'Codigo curso', 'Nombre curso', 'Nota']
 
-training_features, test_features, \
-    training_target, test_target, = train_test_split(dataset.drop(['Especialidad del momento'], axis=1),
-                                                     dataset['Especialidad del momento'],
-                                                     test_size = .1,
-                                                     random_state=12)
-
-x_train, x_val, y_train, y_val = train_test_split(training_features, training_target,
-                                                  test_size = .1,
-                                                  random_state=12)
-
-print(x_train, x_val, y_train, y_val)
-
 # This function generates a graph that displays the average grade each major gets during their first two years of their
 # studies.
 # semester_avg_by_major()
@@ -94,7 +82,16 @@ all_majors = {}
 for major in range(len(aux_majors)):
     all_majors[aux_majors[major]] = major
 
+dataset_INGI = dataset[dataset['Especialidad del momento'] == 'INGI']['ID'].unique()
+dataset_INGO = dataset[dataset['Especialidad del momento'] == 'INGO']['ID'].unique()
+print("INGI\n", dataset_INGI)
+print("INGO\n", dataset_INGO)
+drop_lenght = len(dataset_INGI) - len(dataset_INGO)
+to_erase = []
 
+
+
+"""
 # Created a list in which all student records will be saved and ready for the data frame
 normalized_data = []
 
@@ -157,3 +154,5 @@ df_validation = data_frame[validatoin_mask]
 df_training.to_csv('training_set.csv')
 df_test.to_csv('testing_set.csv')
 df_validation.to_csv('validation_set.csv')
+
+"""
