@@ -94,6 +94,8 @@ while drop_length > 0:
 dataset = dataset[~dataset['ID'].isin(to_erase)]
 
 
+all_students = dataset['ID'].unique()
+
 # Created a list in which all student records will be saved and ready for the data frame
 normalized_data = []
 majors = {}
