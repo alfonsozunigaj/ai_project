@@ -16,6 +16,5 @@ display_step = 1
 
 # Network Parameters
 n_hidden_1 = 256  # 1st layer number of neurons
-n_hidden_2 = 256  # 2nd layer number of neurons
-n_input = 784  # MNIST data input (img shape: 28*28)
+n_input = 5629  # data input (img shape: 28*28)
 n_classes = 4  # amount of majors

@@ -67,7 +67,7 @@ print(x_train, x_val, y_train, y_val)
 
 # This function generates a graph that displays the average grade each major gets during their first two years of their
 # studies.
-semester_avg_by_major()
+# semester_avg_by_major()
 
 
 # Other graph_generation_functions were not included because of the lack of necessity of them in this code.
@@ -88,13 +88,19 @@ all_periods = {}
 for period in range(len(aux_periods)):
     all_periods[aux_periods[period]] = period
 
+# Fetching all majors and saving them into a dictionary
+aux_majors = dataset['Especialidad del momento'].unique()
+all_majors = {}
+for major in range(len(aux_majors)):
+    all_majors[aux_majors[major]] = major
+
 
 # Created a list in which all student records will be saved and ready for the data frame
 normalized_data = []
 
 for student in all_students:
     student_record = [student]
-
+    student_record.append(all_majors[dataset.loc[dataset['ID'] == student, 'Especialidad del momento'].iloc[0]])
     # Every tuple concerning the present student in the dataset is fetch and saved in my_dataset
     my_dataset = dataset.loc[dataset['ID'] == student]
     for course in all_courses:
