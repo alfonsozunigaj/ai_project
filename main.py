@@ -143,18 +143,19 @@ major_data_frame.to_csv('major_index.csv')
 # For this we initialize some variables to indicate the ratio in which to distribute the data in our dataset
 probability = np.random.rand(len(data_frame))
 training_mask = probability < 0.75                          # 70% of data will be training
-test_mask = (probability >= 0.75) & (probability < 0.9)     # 15% of data will be testing
-validatoin_mask = probability >= 0.9                        # 10% of data will be validation
+test_mask = probability >= 0.75
+# test_mask = (probability >= 0.75) & (probability < 0.9)     # 15% of data will be testing
+# validatoin_mask = probability >= 0.9                        # 10% of data will be validation
 
 
 # We now create our three data frames
 df_training = data_frame[training_mask]
 df_test = data_frame[test_mask]
-df_validation = data_frame[validatoin_mask]
+# df_validation = data_frame[validatoin_mask]
 
 
 # And then we save them all as csv files
 df_training.to_csv('training_set.csv')
 df_test.to_csv('testing_set.csv')
-df_validation.to_csv('validation_set.csv')
+# df_validation.to_csv('validation_set.csv')
 

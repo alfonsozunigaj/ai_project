@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
+import datetime
 
 users_training = {}
 x = []
@@ -49,6 +50,10 @@ n_output = 4
 X = tf.placeholder(tf.float32)
 Y = tf.placeholder(tf.float32)
 
+rec, rec_op = tf.metrics.recall(labels=X, predictions=Y)
+acc, acc_op = tf.metrics.accuracy(labels=X, predictions=Y)
+pre, pre_op = tf.metrics.precision(labels=X, predictions=Y)
+
 W1 = tf.Variable(tf.random_uniform([n_input, n_hidden], -1.0, 1.0))
 W2 = tf.Variable(tf.random_uniform([n_hidden, n_output], -1.0, 1.0))
 
@@ -60,43 +65,56 @@ hy = tf.sigmoid(tf.matmul(L2, W2) + b2)
 
 cost = tf.reduce_mean(-Y * tf.log(hy) - (1 - Y) * tf.log(1 - hy))
 
-init = tf.initialize_all_variables()
+init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
 learning_rates = [0.1, 0.01, 0.001, 0.0001]
 training_epochses = [1000, 10000, 15000, 60000]
-for lr in learning_rates[1:]:
+for lr in learning_rates:
     optimizer = tf.train.GradientDescentOptimizer(lr).minimize(cost)
     for te in training_epochses:
+        print('NEW EPOCH')
+        accuracies = []
+        recalls = []
+        precisions = []
         with tf.device('/gpu:0'):
             with tf.Session() as sesh:
                 sesh.run(init)
-                costs = []
-                counter = 0
+                start = datetime.datetime.now()
                 for step in range(te):
                     sesh.run(optimizer, feed_dict={X: x_data, Y: y_data})
 
                     data = sesh.run(cost, feed_dict={X: x_data, Y: y_data})
                     if data is None:
                         continue
-                    costs.append(data)
-                    counter += 1
-                    if step % 1000 == 0:
-                        print(sesh.run(cost, feed_dict={X: x_data, Y: y_data}))
-
-                answer = tf.equal(tf.floor(hy + 0.5), Y)
-                accuracy = tf.reduce_mean(tf.cast(answer, "float"))
-
-                outputs = sesh.run([hy], feed_dict={X: z_data, Y: w_data})
-                print(outputs)
-                result = accuracy.eval({X: z_data, Y: w_data})
-                print("Accuracy: ", result)
-
-                fig, ax = plt.subplots()
-                ax.plot(range(counter), costs)
-                ax.axis([0, te, 0, 1])
-                ax.set(xlabel='Training epochs', ylabel='Cost',
-                       title='Accuracy: {}'.format(result))
-                ax.grid()
-                fig.savefig("lr{}_te{}_training.png".format(lr, te))
-
+                    if step % 50 == 0:
+                        outputs = (sesh.run([hy], feed_dict={X: z_data, Y: w_data})[0]).tolist()
+                        predictions = []
+                        for item in outputs:
+                            max_index = item.index(max(item))
+                            aux_list = [0, 0, 0, 0]
+                            aux_list[max_index] = 1
+                            predictions.append(aux_list)
+                        predictions = np.array(predictions)
+                        accuracy = sesh.run(acc_op, feed_dict={X: w_data, Y: predictions})
+                        recall = sesh.run(rec_op, feed_dict={X: w_data, Y: predictions})
+                        precision = sesh.run(pre_op, feed_dict={X: w_data, Y: predictions})
+                        accuracies.append(accuracy)
+                        recalls.append(recall)
+                        precisions.append(precision)
+                        print(accuracy, recall, precision)
+                end = datetime.datetime.now()
+                print("Learning rate: {} and training epoch: {}".format(lr, te))
+                print('\tSTART: {}\n\tEND: {}\n\tDURATION: {} seconds'.format(start.time(), end.time(), (end-start).seconds))
+                print('\t#################\n\tAccuracy: {}\n\tRecall: {}\n\tPrecision: {}'.format(accuracies[-1], recalls[-1], precisions[-1]))
+                plt.figure(figsize=(16, 9), dpi=100)
+                plt.plot(range(te//50), accuracies)
+                plt.plot(range(te//50), recalls)
+                plt.plot(range(te//50), precisions)
+                plt.axis([0, te//50, 0, 1])
+                plt.xlabel('Epoch')
+                plt.ylabel('Values')
+                plt.legend(['Accuracy', 'Recall', 'Precision'])
+                plt.title('Learning_rate: {} and Training_epochs: {}'.format(lr, te))
+                plt.axis()
+                plt.savefig("lr{}_te{}_training.png".format(lr, te))
                 plt.show()
