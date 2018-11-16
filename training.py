@@ -53,6 +53,7 @@ Y = tf.placeholder(tf.float32)
 rec, rec_op = tf.metrics.recall(labels=X, predictions=Y)
 acc, acc_op = tf.metrics.accuracy(labels=X, predictions=Y)
 pre, pre_op = tf.metrics.precision(labels=X, predictions=Y)
+auc, auc_op = tf.metrics.auc(labels=X, predictions=Y)
 
 W1 = tf.Variable(tf.random_uniform([n_input, n_hidden], -1.0, 1.0))
 W2 = tf.Variable(tf.random_uniform([n_hidden, n_output], -1.0, 1.0))
@@ -76,6 +77,8 @@ for lr in learning_rates:
         accuracies = []
         recalls = []
         precisions = []
+        F1_scores = []
+        AUCs = []
         with tf.device('/gpu:0'):
             with tf.Session() as sesh:
                 sesh.run(init)
@@ -98,22 +101,28 @@ for lr in learning_rates:
                         accuracy = sesh.run(acc_op, feed_dict={X: w_data, Y: predictions})
                         recall = sesh.run(rec_op, feed_dict={X: w_data, Y: predictions})
                         precision = sesh.run(pre_op, feed_dict={X: w_data, Y: predictions})
+                        auc = sesh.run(auc_op, feed_dict={X: w_data, Y: predictions})
+                        F1_score = 2*precision*recall/(precision+recall)
                         accuracies.append(accuracy)
                         recalls.append(recall)
                         precisions.append(precision)
-                        print(accuracy, recall, precision)
+                        AUCs.append(auc)
+                        F1_scores.append(F1_score)
+                        print(accuracy, recall, precision, F1_score, auc)
                 end = datetime.datetime.now()
                 print("Learning rate: {} and training epoch: {}".format(lr, te))
                 print('\tSTART: {}\n\tEND: {}\n\tDURATION: {} seconds'.format(start.time(), end.time(), (end-start).seconds))
-                print('\t#################\n\tAccuracy: {}\n\tRecall: {}\n\tPrecision: {}'.format(accuracies[-1], recalls[-1], precisions[-1]))
+                print('\t#################\n\tAccuracy: {}\n\tRecall: {}\n\tPrecision: {}\n\tF1 Score: {}\n\tAUC: {}'.format(accuracies[-1], recalls[-1], precisions[-1], F1_scores[-1], AUCs[-1]))
                 plt.figure(figsize=(16, 9), dpi=100)
                 plt.plot(range(te//50), accuracies)
                 plt.plot(range(te//50), recalls)
                 plt.plot(range(te//50), precisions)
+                plt.plot(range(te//50), F1_scores)
+                plt.plot(range(te//50), AUCs)
                 plt.axis([0, te//50, 0, 1])
                 plt.xlabel('Epoch')
                 plt.ylabel('Values')
-                plt.legend(['Accuracy', 'Recall', 'Precision'])
+                plt.legend(['Accuracy', 'Recall', 'Precision', 'F1 Score', 'AUC'])
                 plt.title('Learning_rate: {} and Training_epochs: {}'.format(lr, te))
                 plt.axis()
                 plt.savefig("lr{}_te{}_training.png".format(lr, te))
