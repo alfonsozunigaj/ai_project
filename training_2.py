@@ -41,8 +41,8 @@ with open('major_index.csv', 'r') as csvfile:
 y_data = np.array(y)
 w_data = np.array(w)
 
-learning_rate = 0.01
-training_epochs = 15000
+lr = 0.01
+te = 60000
 n_input = len(x[0])
 n_hidden = 15
 n_output = 4
@@ -68,16 +68,8 @@ cost = tf.reduce_mean(-Y * tf.log(hy) - (1 - Y) * tf.log(1 - hy))
 
 init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
-learning_rates = [0.1, 0.01, 0.001, 0.0001]
-training_epochses = [1000, 10000, 15000, 60000]
-lr = 0.01
 optimizer = tf.train.GradientDescentOptimizer(lr).minimize(cost)
-te = 60000
-accuracies = []
-recalls = []
-precisions = []
-F1_scores = []
-AUCs = []
+
 with tf.device('/gpu:0'):
     with tf.Session() as sesh:
         sesh.run(init)
@@ -88,41 +80,17 @@ with tf.device('/gpu:0'):
             data = sesh.run(cost, feed_dict={X: x_data, Y: y_data})
             if data is None:
                 continue
-            if step % 50 == 0:
-                outputs = (sesh.run([hy], feed_dict={X: z_data, Y: w_data})[0]).tolist()
-                predictions = []
-                for item in outputs:
-                    max_index = item.index(max(item))
-                    aux_list = [0, 0, 0, 0]
-                    aux_list[max_index] = 1
-                    predictions.append(aux_list)
-                predictions = np.array(predictions)
-                accuracy = sesh.run(acc_op, feed_dict={X: w_data, Y: predictions})
-                recall = sesh.run(rec_op, feed_dict={X: w_data, Y: predictions})
-                precision = sesh.run(pre_op, feed_dict={X: w_data, Y: predictions})
-                auc = sesh.run(auc_op, feed_dict={X: w_data, Y: predictions})
-                F1_score = 2*precision*recall/(precision+recall)
-                accuracies.append(accuracy)
-                recalls.append(recall)
-                precisions.append(precision)
-                AUCs.append(auc)
-                F1_scores.append(F1_score)
-                print(accuracy, recall, precision, F1_score, auc)
-        end = datetime.datetime.now()
-        print("Learning rate: {} and training epoch: {}".format(lr, te))
-        print('\tSTART: {}\n\tEND: {}\n\tDURATION: {} seconds'.format(start.time(), end.time(), (end-start).seconds))
-        print('\t#################\n\tAccuracy: {}\n\tRecall: {}\n\tPrecision: {}\n\tF1 Score: {}\n\tAUC: {}'.format(accuracies[-1], recalls[-1], precisions[-1], F1_scores[-1], AUCs[-1]))
-        plt.figure(figsize=(16, 9), dpi=100)
-        plt.plot(range(te//50), accuracies)
-        plt.plot(range(te//50), recalls)
-        plt.plot(range(te//50), precisions)
-        plt.plot(range(te//50), F1_scores)
-        plt.plot(range(te//50), AUCs)
-        plt.axis([0, te//50, 0, 1])
-        plt.xlabel('Epoch')
-        plt.ylabel('Values')
-        plt.legend(['Accuracy', 'Recall', 'Precision', 'F1 Score', 'AUC'])
-        plt.title('Learning_rate: {} and Training_epochs: {}'.format(lr, te))
-        plt.axis()
-        plt.savefig("lr{}_te{}_training.png".format(lr, te))
-        plt.show()
+        outputs = (sesh.run([hy], feed_dict={X: z_data, Y: w_data})[0]).tolist()
+        predictions = []
+        for item in outputs:
+            max_index = item.index(max(item))
+            aux_list = [0, 0, 0, 0]
+            aux_list[max_index] = 1
+            predictions.append(aux_list)
+        predictions = np.array(predictions)
+        accuracy = sesh.run(acc_op, feed_dict={X: w_data, Y: predictions})
+        recall = sesh.run(rec_op, feed_dict={X: w_data, Y: predictions})
+        auc = sesh.run(auc_op, feed_dict={X: w_data, Y: predictions})
+        print("Accuracy: ", accuracy)
+        print("Recall: ", recall)
+        print("AUC: ", auc)
