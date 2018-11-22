@@ -96,6 +96,25 @@ dataset = dataset[~dataset['ID'].isin(to_erase)]
 
 all_students = dataset['ID'].unique()
 
+print('1. Create big data\n2. Test thing')
+choice = input('Choose: ')
+
+if choice == '2':
+    new_dataset = pd.read_csv("test.csv")
+    all_students = new_dataset['ID'].unique()
+
+    # Fetching all courses and saving them into a dictionary
+    aux_courses = new_dataset['Codigo curso'].unique()
+    all_courses = {}
+    for course in range(len(aux_courses)):
+        all_courses[aux_courses[course]] = course
+
+    # Fetching all majors and saving them into a dictionary
+    aux_majors = new_dataset['Especialidad del momento'].unique()
+    all_majors = {}
+    for major in range(len(aux_majors)):
+        all_majors[aux_majors[major]] = major
+
 # Created a list in which all student records will be saved and ready for the data frame
 normalized_data = []
 n_data_majors = []
@@ -139,23 +158,24 @@ major_data_frame = pd.DataFrame(n_data_majors)
 data_frame.to_csv('balanced_data.csv')
 major_data_frame.to_csv('major_index.csv')
 
-# Finally, we still need to create a training set, a validation set and a test set for our dataset
-# For this we initialize some variables to indicate the ratio in which to distribute the data in our dataset
-probability = np.random.rand(len(data_frame))
-training_mask = probability < 0.75                          # 70% of data will be training
-#test_mask = probability >= 0.75
-test_mask = (probability >= 0.75) & (probability < 0.9)     # 15% of data will be testing
-validatoin_mask = probability >= 0.9                        # 10% of data will be validation
+if choice != '2':
+    # Finally, we still need to create a training set, a validation set and a test set for our dataset
+    # For this we initialize some variables to indicate the ratio in which to distribute the data in our dataset
+    probability = np.random.rand(len(data_frame))
+    training_mask = probability < 0.75                          # 70% of data will be training
+    #test_mask = probability >= 0.75
+    test_mask = (probability >= 0.75) & (probability < 0.9)     # 15% of data will be testing
+    validatoin_mask = probability >= 0.9                        # 10% of data will be validation
 
 
-# We now create our three data frames
-df_training = data_frame[training_mask]
-df_test = data_frame[test_mask]
-df_validation = data_frame[validatoin_mask]
+    # We now create our three data frames
+    df_training = data_frame[training_mask]
+    df_test = data_frame[test_mask]
+    df_validation = data_frame[validatoin_mask]
 
 
-# And then we save them all as csv files
-df_training.to_csv('training_set.csv')
-df_test.to_csv('testing_set.csv')
-df_validation.to_csv('validation_set.csv')
+    # And then we save them all as csv files
+    df_training.to_csv('training_set.csv')
+    df_test.to_csv('testing_set.csv')
+    df_validation.to_csv('validation_set.csv')
 

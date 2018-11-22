@@ -40,7 +40,7 @@ with open('major_index.csv', 'r') as csvfile:
 y_data = np.array(y)
 w_data = np.array(w)
 
-lr = 0.01
+lr = 0.001
 te = 60000
 n_input = len(x[0])
 n_hidden = 25
