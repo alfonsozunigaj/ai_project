@@ -1,7 +1,6 @@
 import tensorflow as tf
 import numpy as np
 import csv
-import matplotlib.pyplot as plt
 import datetime
 
 users_training = {}
@@ -44,7 +43,7 @@ w_data = np.array(w)
 lr = 0.01
 te = 60000
 n_input = len(x[0])
-n_hidden = 15
+n_hidden = 25
 n_output = 4
 
 X = tf.placeholder(tf.float32)
@@ -70,6 +69,8 @@ init = tf.group(tf.global_variables_initializer(), tf.local_variables_initialize
 
 optimizer = tf.train.GradientDescentOptimizer(lr).minimize(cost)
 
+saver = tf.train.Saver()
+
 with tf.device('/gpu:0'):
     with tf.Session() as sesh:
         sesh.run(init)
@@ -94,3 +95,6 @@ with tf.device('/gpu:0'):
         print("Accuracy: ", accuracy)
         print("Recall: ", recall)
         print("AUC: ", auc)
+
+        save_path = saver.save(sesh, "/temp/model.ckpt")
+        print("Model saved in path: %s" % save_path)

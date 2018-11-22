@@ -1,8 +1,6 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
-from sklearn.model_selection import train_test_split
-import time
 
 
 def semester_avg_by_major():
@@ -36,7 +34,7 @@ def semester_avg_by_major():
     plt.show()
 
 
-dataset = pd.read_csv("data.csv")
+dataset = pd.read_csv("pred_dataset.csv")
 # Erase every tuple that has a missing or null field
 dataset = dataset.dropna()
 
@@ -135,27 +133,7 @@ for student in all_students:
 # After every student has been analysed, a new data frame is created using pandas, based on the normalized_data array.
 data_frame = pd.DataFrame(normalized_data)
 major_data_frame = pd.DataFrame(n_data_majors)
-# The normalized data is saved to the current directory with the name 'ready.csv'
-data_frame.to_csv('balanced_data.csv')
-major_data_frame.to_csv('major_index.csv')
 
-# Finally, we still need to create a training set, a validation set and a test set for our dataset
-# For this we initialize some variables to indicate the ratio in which to distribute the data in our dataset
-probability = np.random.rand(len(data_frame))
-training_mask = probability < 0.75                          # 70% of data will be training
-#test_mask = probability >= 0.75
-test_mask = (probability >= 0.75) & (probability < 0.9)     # 15% of data will be testing
-validatoin_mask = probability >= 0.9                        # 10% of data will be validation
-
-
-# We now create our three data frames
-df_training = data_frame[training_mask]
-df_test = data_frame[test_mask]
-df_validation = data_frame[validatoin_mask]
-
-
-# And then we save them all as csv files
-df_training.to_csv('training_set.csv')
-df_test.to_csv('testing_set.csv')
-df_validation.to_csv('validation_set.csv')
+data_frame.to_csv('balanced_data_pred.csv')
+major_data_frame.to_csv('major_index_pred.csv')
 
