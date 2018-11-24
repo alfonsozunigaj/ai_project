@@ -103,18 +103,6 @@ if choice == '2':
     new_dataset = pd.read_csv("test.csv")
     all_students = new_dataset['ID'].unique()
 
-    # Fetching all courses and saving them into a dictionary
-    aux_courses = new_dataset['Codigo curso'].unique()
-    all_courses = {}
-    for course in range(len(aux_courses)):
-        all_courses[aux_courses[course]] = course
-
-    # Fetching all majors and saving them into a dictionary
-    aux_majors = new_dataset['Especialidad del momento'].unique()
-    all_majors = {}
-    for major in range(len(aux_majors)):
-        all_majors[aux_majors[major]] = major
-
 # Created a list in which all student records will be saved and ready for the data frame
 normalized_data = []
 n_data_majors = []

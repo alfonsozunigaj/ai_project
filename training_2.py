@@ -1,7 +1,9 @@
+import pickle
 import tensorflow as tf
 import numpy as np
 import csv
 import datetime
+
 
 users_training = {}
 x = []
@@ -40,8 +42,8 @@ with open('major_index.csv', 'r') as csvfile:
 y_data = np.array(y)
 w_data = np.array(w)
 
-lr = 0.001
-te = 60000
+# lr = 0.001
+# te = 60000
 n_input = len(x[0])
 n_hidden = 25
 n_output = 4
@@ -67,34 +69,49 @@ cost = tf.reduce_mean(-Y * tf.log(hy) - (1 - Y) * tf.log(1 - hy))
 
 init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
-optimizer = tf.train.GradientDescentOptimizer(lr).minimize(cost)
 
 saver = tf.train.Saver()
 
-with tf.device('/gpu:0'):
-    with tf.Session() as sesh:
-        sesh.run(init)
-        start = datetime.datetime.now()
-        for step in range(te):
-            sesh.run(optimizer, feed_dict={X: x_data, Y: y_data})
+my_data = {}
 
-            data = sesh.run(cost, feed_dict={X: x_data, Y: y_data})
-            if data is None:
-                continue
-        outputs = (sesh.run([hy], feed_dict={X: z_data, Y: w_data})[0]).tolist()
-        predictions = []
-        for item in outputs:
-            max_index = item.index(max(item))
-            aux_list = [0, 0, 0, 0]
-            aux_list[max_index] = 1
-            predictions.append(aux_list)
-        predictions = np.array(predictions)
-        accuracy = sesh.run(acc_op, feed_dict={X: w_data, Y: predictions})
-        recall = sesh.run(rec_op, feed_dict={X: w_data, Y: predictions})
-        auc = sesh.run(auc_op, feed_dict={X: w_data, Y: predictions})
-        print("Accuracy: ", accuracy)
-        print("Recall: ", recall)
-        print("AUC: ", auc)
+for lr in [0.1, 0.01, 0.001, 0.0001]:
+    optimizer = tf.train.GradientDescentOptimizer(lr).minimize(cost)
+    my_data[str(lr)] = {}
+    for te in [10, 50, 100, 500, 1000, 5000, 10000, 60000]:
+        my_data[str(lr)][str(te)] = {
+            'accuracy': None,
+            'recall': None,
+            'auc': None
+        }
+        with tf.device('/gpu:0'):
+            with tf.Session() as sesh:
+                sesh.run(init)
+                start = datetime.datetime.now()
+                for step in range(te):
+                    sesh.run(optimizer, feed_dict={X: x_data, Y: y_data})
 
-        save_path = saver.save(sesh, "/temp/model.ckpt")
-        print("Model saved in path: %s" % save_path)
+                    data = sesh.run(cost, feed_dict={X: x_data, Y: y_data})
+                    if data is None:
+                        continue
+                outputs = (sesh.run([hy], feed_dict={X: z_data, Y: w_data})[0]).tolist()
+                predictions = []
+                for item in outputs:
+                    max_index = item.index(max(item))
+                    aux_list = [0, 0, 0, 0]
+                    aux_list[max_index] = 1
+                    predictions.append(aux_list)
+                predictions = np.array(predictions)
+                accuracy = sesh.run(acc_op, feed_dict={X: w_data, Y: predictions})
+                recall = sesh.run(rec_op, feed_dict={X: w_data, Y: predictions})
+                auc = sesh.run(auc_op, feed_dict={X: w_data, Y: predictions})
+                my_data[str(lr)][str(te)]['accuracy'] = accuracy
+                my_data[str(lr)][str(te)]['recall'] = recall
+                my_data[str(lr)][str(te)]['auc'] = auc
+                print("Accuracy: ", accuracy)
+                print("Recall: ", recall)
+                print("AUC: ", auc)
+
+                # save_path = saver.save(sesh, "/temp/model.ckpt")
+                # print("Model saved in path: %s" % save_path)
+
+np.save('data.npy', my_data)

@@ -1,0 +1,132 @@
+Learning rate:  0.1
+	Training epochs:  10
+		Accuracy:  0.6
+		Recall:  0.2
+		AUC:  0.4666667
+	Training epochs:  50
+		Accuracy:  0.6956522
+		Recall:  0.39130434
+		AUC:  0.5942029
+	Training epochs:  100
+		Accuracy:  0.78695655
+		Recall:  0.57391304
+		AUC:  0.7159421
+	Training epochs:  500
+		Accuracy:  0.8086957
+		Recall:  0.6173913
+		AUC:  0.7449275
+	Training epochs:  1000
+		Accuracy:  0.8347826
+		Recall:  0.6695652
+		AUC:  0.7797101
+	Training epochs:  5000
+		Accuracy:  0.8695652
+		Recall:  0.73913044
+		AUC:  0.826087
+	Training epochs:  10000
+		Accuracy:  0.8913044
+		Recall:  0.7826087
+		AUC:  0.8550725
+	Training epochs:  60000
+		Accuracy:  0.5869565
+		Recall:  0.17391305
+		AUC:  0.44927534
+Learning rate:  0.01
+	Training epochs:  10
+		Accuracy:  0.6478261
+		Recall:  0.29565218
+		AUC:  0.5304348
+	Training epochs:  50
+		Accuracy:  0.6695652
+		Recall:  0.33913043
+		AUC:  0.5594203
+	Training epochs:  100
+		Accuracy:  0.6086956
+		Recall:  0.2173913
+		AUC:  0.4782609
+	Training epochs:  500
+		Accuracy:  0.73478264
+		Recall:  0.4695652
+		AUC:  0.64637685
+	Training epochs:  1000
+		Accuracy:  0.726087
+		Recall:  0.45217392
+		AUC:  0.6347826
+	Training epochs:  5000
+		Accuracy:  0.8608696
+		Recall:  0.7217391
+		AUC:  0.8144927
+	Training epochs:  10000
+		Accuracy:  0.82608694
+		Recall:  0.65217394
+		AUC:  0.768116
+	Training epochs:  60000
+		Accuracy:  0.8826087
+		Recall:  0.76521736
+		AUC:  0.8434782
+Learning rate:  0.001
+	Training epochs:  10
+		Accuracy:  0.6173913
+		Recall:  0.2347826
+		AUC:  0.48985505
+	Training epochs:  50
+		Accuracy:  0.6695652
+		Recall:  0.33913043
+		AUC:  0.5594203
+	Training epochs:  100
+		Accuracy:  0.56956524
+		Recall:  0.13913043
+		AUC:  0.42608696
+	Training epochs:  500
+		Accuracy:  0.67826086
+		Recall:  0.35652173
+		AUC:  0.5710145
+	Training epochs:  1000
+		Accuracy:  0.6826087
+		Recall:  0.3652174
+		AUC:  0.5768116
+	Training epochs:  5000
+		Accuracy:  0.66086954
+		Recall:  0.32173914
+		AUC:  0.5478261
+	Training epochs:  10000
+		Accuracy:  0.7304348
+		Recall:  0.46086955
+		AUC:  0.6405797
+	Training epochs:  60000
+		Accuracy:  0.79130435
+		Recall:  0.5826087
+		AUC:  0.7217392
+Learning rate:  0.0001
+	Training epochs:  10
+		Accuracy:  0.5782609
+		Recall:  0.15652174
+		AUC:  0.4376812
+	Training epochs:  50
+		Accuracy:  0.65217394
+		Recall:  0.3043478
+		AUC:  0.5362319
+	Training epochs:  100
+		Accuracy:  0.7
+		Recall:  0.4
+		AUC:  0.6
+	Training epochs:  500
+		Accuracy:  0.5826087
+		Recall:  0.16521738
+		AUC:  0.4434783
+	Training epochs:  1000
+		Accuracy:  0.5347826
+		Recall:  0.069565214
+		AUC:  0.37971017
+	Training epochs:  5000
+		Accuracy:  0.6173913
+		Recall:  0.2347826
+		AUC:  0.48985505
+	Training epochs:  10000
+		Accuracy:  0.6173913
+		Recall:  0.2347826
+		AUC:  0.48985505
+	Training epochs:  60000
+		Accuracy:  0.74347824
+		Recall:  0.4869565
+		AUC:  0.657971
